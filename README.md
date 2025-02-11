@@ -1,2 +1,2 @@
 # browser-use-gologin
-Automatize GoLogin via Browser Use
+Automate GoLogin through Browser Use

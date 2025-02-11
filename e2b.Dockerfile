@@ -7,7 +7,7 @@ RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 ENV PATH="/root/.local/bin/:$PATH"
 
 # Clone the repository
-RUN git clone https://github.com/mkinf/browser-use-gologin
+RUN git clone https://github.com/mkinf-io/browser-use-gologin
 
 # Change directory and run UV sync
 WORKDIR browser-use-gologin

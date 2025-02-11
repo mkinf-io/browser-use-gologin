@@ -9,3 +9,10 @@ dependencies = [
     "gologin>=2025.1.21115126",
     "mcp>=1.2.1",
 ]
+
+[project.scripts]
+browser-use-gologin = "browser_use_gologin:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

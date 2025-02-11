@@ -1,0 +1,11 @@
+[project]
+name = "browser-use-gologin"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "browser-use>=0.1.36",
+    "gologin>=2025.1.21115126",
+    "mcp>=1.2.1",
+]

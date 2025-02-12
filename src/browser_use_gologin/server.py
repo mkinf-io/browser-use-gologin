@@ -71,6 +71,7 @@ async def handle_call_tool(
         gologin = GoLogin({
             'token': gologin_api_key,
             'profile_id': profile_id,
+            'executablePath': '/opt/GoLogin-3.3.78/orbita-browser/chrome',
             'writeCookiesFromServer': True,
             # 'uploadCookiesToServer': True, # The library doesn't handle it
         })

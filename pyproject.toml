@@ -16,3 +16,6 @@ browser-use-gologin = "browser_use_gologin:main"
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+# // {"method":"notifications/initialized","jsonrpc":"2.0"}
+# // {"method":"tools/list","jsonrpc":"2.0","id":0}

@@ -9,9 +9,11 @@ from browser_use import Agent, Browser, BrowserConfig, Controller
 from browser_use.browser.context import BrowserContextConfig
 from gologin import GoLogin
 from enum import Enum
+import subprocess
+import time
 
 
-server = Server("gitingest")
+server = Server("browser-use-gologin")
 
 class ServerTools(str, Enum):
   RUN_TASK = "run_task"
@@ -50,7 +52,7 @@ async def handle_call_tool(
     """
     if name != ServerTools.RUN_TASK.value: raise ValueError(f"Unknown tool: {name}")
     # LLM
-    llm_model = os.getenv("LLM_MODEL") or "gpt-4o-mini"
+    llm_model = os.getenv("LLM_MODEL", "gpt-4o-mini")
     llm_api_key = os.getenv("LLM_API_KEY")
     if not llm_api_key: raise ValueError("Missing LLM API key")
     # GoLogin
@@ -68,12 +70,27 @@ async def handle_call_tool(
     controller = Controller()
 
     try:
+        # Wait for Xvfb to be ready (it's started by entrypoint.sh)
+        wait_for_xvfb()
+        
+        # Ensure display is set before starting the browser
+        os.environ['DISPLAY'] = ':0'
+        
         gologin = GoLogin({
             'token': gologin_api_key,
             'profile_id': profile_id,
-            'executablePath': '/usr/local/bin/run-gologin',
+            'executablePath': os.getenv("EXEC_PATH", "/.gologin/browser/orbita-browser/chrome"),
             'writeCookiesFromServer': True,
-            # 'uploadCookiesToServer': True, # The library doesn't handle it
+            'extra_params': [
+                '--start-maximized',
+                '--disable-dev-shm-usage',
+                '--no-sandbox',
+                '--no-zygote',
+                '--disable-gpu',
+                '--disable-software-rasterizer',
+                '--window-position=0,0',
+                f'--window-size={os.getenv("SCREEN_WIDTH", "1920")},{os.getenv("SCREEN_HEIGHT", "1080")}',
+            ],
         })
 
         cdp_address = gologin.start()
@@ -86,7 +103,7 @@ async def handle_call_tool(
             )
         )
 
-        model = ChatOpenAI(model=llm_model, temperature=0.7)
+        model = ChatOpenAI(model=llm_model, api_key=llm_api_key, temperature=0.7)
 
         agent = Agent(
             task=task,
@@ -108,7 +125,21 @@ async def handle_call_tool(
 
 async def save_cookies(cookies_path: str, gologin: GoLogin):
     with open(cookies_path, "r") as f:
-    	gologin.uploadCookies(json.loads(f.read()))
+        gologin.uploadCookies(json.loads(f.read()))
+
+
+def wait_for_xvfb():
+    """Wait for Xvfb to be ready on display :0"""
+    max_attempts = 10
+    attempt = 0
+    while attempt < max_attempts:
+        try:
+            subprocess.run(['xdpyinfo', '-display', ':0'], check=True, capture_output=True)
+            return True
+        except subprocess.CalledProcessError:
+            attempt += 1
+            time.sleep(1)
+    raise RuntimeError("Xvfb failed to start within the timeout period")
 
 
 async def main():

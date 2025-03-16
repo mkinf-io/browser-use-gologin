@@ -11,6 +11,7 @@
 # const sandbox = await Sandbox.create('mkinf-io__browser-use-gologin')
 
 team_id = "6154833f-d6de-4abb-929b-c580b082ebf9"
+start_cmd = "/entrypoint.sh"
 dockerfile = "e2b.Dockerfile"
 template_name = "mkinf-io__browser-use-gologin"
 template_id = "g2t3wl8dyxr317pjif7i"

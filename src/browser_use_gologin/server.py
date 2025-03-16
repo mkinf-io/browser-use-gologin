@@ -120,7 +120,18 @@ async def handle_call_tool(
         print(e)
         raise ValueError(f"Error processing task: {str(e)}")
 
-    return [types.TextContent(type="text", text=json.dumps(agent.history))]
+    # Convert agent history to a serializable format
+    history = {
+        "steps": len(agent.history.history),  # Use .history to get the list
+        "actions": agent.history.model_actions(),  # These are already dictionaries
+        "extracted_content": agent.history.extracted_content(),
+        "final_result": agent.history.final_result(),
+        "urls_visited": agent.history.urls(),
+        "is_done": agent.history.is_done(),
+        "errors": agent.history.errors()
+    }
+
+    return [types.TextContent(type="text", text=json.dumps(history))]
 
 
 async def save_cookies(cookies_path: str, gologin: GoLogin):

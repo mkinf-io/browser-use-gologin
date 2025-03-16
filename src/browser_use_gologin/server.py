@@ -79,7 +79,7 @@ async def handle_call_tool(
         gologin = GoLogin({
             'token': gologin_api_key,
             'profile_id': profile_id,
-            'executablePath': os.getenv("EXEC_PATH", "/.gologin/browser/orbita-browser/chrome"),
+            'executablePath': "/root/.gologin/browser/orbita-browser/chrome",
             'writeCookiesFromServer': True,
             'extra_params': [
                 '--start-maximized',

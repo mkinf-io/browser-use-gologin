@@ -39,7 +39,7 @@ ENV PATH="/root/.local/bin/:$PATH"
 
 # Worker install
 COPY ./ /opt/orbita/
-RUN cd /opt/orbita/ && uv sync && uv pip install playwright && uv run playwright install && uv run playwright install-deps
+RUN cd /opt/orbita/ && uv sync && uv add playwright && uv run playwright install && uv run playwright install-deps
 
 
 RUN rm /etc/nginx/sites-enabled/default

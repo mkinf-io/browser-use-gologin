@@ -120,16 +120,10 @@ async def handle_call_tool(
         print(e)
         raise ValueError(f"Error processing task: {str(e)}")
 
-    # Convert agent history to a serializable format
-    history = {
-        "steps": len(agent.history.history),  # Use .history to get the list
-        "actions": agent.history.model_actions(),  # These are already dictionaries
-        "extracted_content": agent.history.extracted_content(),
-        "final_result": agent.history.final_result(),
-        "urls_visited": agent.history.urls(),
-        "is_done": agent.history.is_done(),
-        "errors": agent.history.errors()
-    }
+    # Convert agent history to a serializable format using model_dump
+    history = agent.history.model_dump_json(
+          exclude={"history": {"__all__": {"state": {"screenshot"}}}}
+        )
 
     return [types.TextContent(type="text", text=json.dumps(history))]
 

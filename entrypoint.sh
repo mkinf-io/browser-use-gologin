@@ -3,6 +3,9 @@
 # Create required directories
 mkdir -p ~/.vnc
 
+# Start D-Bus daemon
+dbus-daemon --system --fork
+
 # Set up display
 DISPLAY=:0
 export DISPLAY=:0
